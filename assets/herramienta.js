@@ -250,14 +250,106 @@ document.getElementById('decRes').innerHTML='<div class="valor-sec">Binario: <st
 '<div class="valor-sec">Hexadecimal: <strong>'+n.toString(16).toUpperCase()+'</strong></div>'+
 '<div class="valor-sec">Octal: <strong>'+n.toString(8)+'</strong></div>';});}
 
-// ===== MÁS HERRAMIENTAS PLACEHOLDER =====
-function renderDivisas(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: conversor de divisas en tiempo real.</p></div>';}
-function renderUnidades(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: conversor completo de unidades.</p></div>';}
-function renderQrcode(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: generador de códigos QR.</p></div>';}
-function renderDiferencia(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: comparador de textos.</p></div>';}
-function renderLorem(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: generador de Lorem Ipsum.</p></div>';}
-function renderMorse(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: conversor de código Morse.</p></div>';}
-function renderFraccion(){app.innerHTML='<div class="calc-form"><p style="color:var(--text2);text-align:center;padding:20px">Próximamente: calculadora de fracciones.</p></div>';}
+// ===== DIVISAS =====
+function renderDivisas(){
+var rates={USD:1,EUR:0.92,GBP:0.79,JPY:157.5,CNY:7.24,CAD:1.37,AUD:1.52,CHF:0.89,MXN:18.2,BRL:5.45,ARS:910,KRW:1380,INR:83.5,TRY:32.1,RUB:89.5,SEK:10.7,NOK:10.5,DKK:6.9,PLN:4.04,ZAR:18.8,SGD:1.35,HKD:7.82,TWD:32.3,CLP:970,COP:4020,PEN:3.73};
+function convert(){var amt=g('dvMonto')||0,from=document.getElementById('dvFrom').value,to=document.getElementById('dvTo').value,usd=amt/rates[from],res=usd*rates[to];
+document.getElementById('dvRes').innerHTML='<div class="valor-grande">'+res.toFixed(2)+'</div><div class="valor-sec">1 '+from+' = '+rates[to]/rates[from]+' '+to+' | Tasas aprox.</div>';}
+var opts=Object.keys(rates).map(function(c){return '<option value="'+c+'">'+c+'</option>'}).join('');
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Cantidad</label><input type="number" id="dvMonto" value="100" step="0.01"></div>'+
+'<div class="form-row"><label>De</label><select id="dvFrom">'+opts+'</select></div>'+
+'<div class="form-row"><label>A</label><select id="dvTo">'+opts.replace('value="USD"','value="EUR" selected')+'</select></div>'+
+'<button class="btn-primary" id="btnDV">Convertir</button><div class="resultado" id="dvRes"></div></div>';
+document.getElementById('btnDV').addEventListener('click',convert);convert();}
+
+// ===== UNIDADES =====
+function renderUnidades(){
+var cats={longitud:{u:['Metro','Kilómetro','Milla','Pie','Pulgada','Centímetro','Yarda'],f:[1,0.001,0.000621,3.281,39.37,100,1.094]},
+peso:{u:['Kilogramo','Gramo','Libra','Onza','Tonelada','Miligramo'],f:[1,1000,2.205,35.27,0.001,1e6]},
+volumen:{u:['Litro','Mililitro','Galón USA','Cuarto','Pinta','Taza'],f:[1,1000,0.264,1.057,2.113,4.227]},
+temperatura:{u:['°C','°F','°K'],f:[1,1,1],sp:true}};
+var catSel=Object.keys(cats).map(function(c,i){return '<option value="'+c+'"'+(i===0?' selected':'')+'>'+c.charAt(0).toUpperCase()+c.slice(1)+'</option>'}).join('');
+function updateUnits(){var cat=document.getElementById('unCat').value;var c=cats[cat];var sin=c.u.map(function(u,i){return '<option value="'+i+'">'+u+'</option>'}).join('');
+document.getElementById('unFrom').innerHTML=sin;document.getElementById('unTo').innerHTML=sin;convert();}
+function convert(){var cat=document.getElementById('unCat').value;var c=cats[cat];var v=g('unVal')||1;var fi=parseInt(document.getElementById('unFrom').value);var ti=parseInt(document.getElementById('unTo').value);
+var base;if(c.sp){base=v;}else{base=v/c.f[fi];}
+var res;if(c.sp){if(fi===0)res=v;else if(fi===1)res=(v-32)*5/9;else res=v-273.15;
+if(ti===0)res=res;else if(ti===1)res=res*9/5+32;else res=res+273.15;}
+else{res=base*c.f[ti];}
+document.getElementById('unRes').innerHTML='<div class="valor-grande">'+res.toFixed(4)+' '+c.u[ti]+'</div>';}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Categoría</label><select id="unCat" onchange="updateUnits()">'+catSel+'</select></div>'+
+'<div class="form-row"><label>Valor</label><input type="number" id="unVal" value="1" step="any"></div>'+
+'<div class="form-row"><label>De</label><select id="unFrom"></select></div>'+
+'<div class="form-row"><label>A</label><select id="unTo"></select></div>'+
+'<button class="btn-primary" id="btnUN">Convertir</button><div class="resultado" id="unRes"></div></div>';
+document.getElementById('btnUN').addEventListener('click',convert);updateUnits();window.updateUnits=updateUnits;}
+
+// ===== QR CODE =====
+function renderQrcode(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Texto o URL</label><input type="text" id="qrText" placeholder="https://ejemplo.com"></div>'+
+'<div class="form-row"><label>Tamaño</label><select id="qrSize"><option value="150">150x150</option><option value="200" selected>200x200</option><option value="300">300x300</option><option value="500">500x500</option></select></div>'+
+'<button class="btn-primary" id="btnQR">Generar QR</button><div class="resultado qr-output" id="qrRes"></div></div>';
+document.getElementById('btnQR').addEventListener('click',function(){var t=document.getElementById('qrText').value||'https://herramientas.cc';var s=document.getElementById('qrSize').value;
+document.getElementById('qrRes').innerHTML='<img src="https://api.qrserver.com/v1/create-qr-code/?size='+s+'x'+s+'&data='+encodeURIComponent(t)+'" alt="QR Code" style="max-width:100%;border-radius:8px">';});}
+
+// ===== DIFERENCIA =====
+function renderDiferencia(){
+function diff(){var a=document.getElementById('dfA').value.split('\n'),b=document.getElementById('dfB').value.split('\n');
+var m=Math.max(a.length,b.length),h='<table class="tabla-resultados"><thead><tr><th>#</th><th>Texto A</th><th>Texto B</th></tr></thead><tbody>';
+for(var i=0;i<m;i++){var la=a[i]||'',lb=b[i]||'';var cls=la===lb?'':'style="background:#fee2e2;color:#dc2626"';h+='<tr><td>'+(i+1)+'</td><td>'+la+'</td><td '+cls+'>'+lb+'</td></tr>';}
+h+='</tbody></table>';document.getElementById('dfRes').innerHTML=h;}
+app.innerHTML='<div class="calc-form" style="max-width:100%"><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">'+
+'<div class="form-row"><label>Texto A</label><textarea id="dfA" rows="6" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text);font-size:.85rem">Hola</textarea></div>'+
+'<div class="form-row"><label>Texto B</label><textarea id="dfB" rows="6" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text);font-size:.85rem">Hola mundo</textarea></div></div>'+
+'<button class="btn-primary" id="btnDF">Comparar</button><div class="resultado" id="dfRes"></div></div>';
+document.getElementById('btnDF').addEventListener('click',diff);}
+
+// ===== LOREM IPSUM =====
+function renderLorem(){
+var lorem='Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+function gen(){var p=parseInt(document.getElementById('lpParrafos').value)||1;var s=parseInt(document.getElementById('lpOraciones').value)||3;var res='',i,j;
+for(i=0;i<p;i++){var par='';for(j=0;j<s;j++){var words=lorem.split(' ');var start=Math.floor(Math.random()*(words.length-10));var len=Math.floor(Math.random()*8)+10;par+=words.slice(start,start+len).join(' ')+'. ';}
+res+='<p style="margin-bottom:10px;line-height:1.7">'+par+'</p>';}
+document.getElementById('lpRes').innerHTML=res;}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Párrafos</label><input type="number" id="lpParrafos" value="3" min="1" max="20"></div>'+
+'<div class="form-row"><label>Oraciones por párrafo</label><input type="number" id="lpOraciones" value="4" min="1" max="10"></div>'+
+'<button class="btn-primary" id="btnLP">Generar</button><div class="resultado" id="lpRes"></div></div>';
+document.getElementById('btnLP').addEventListener('click',gen);gen();}
+
+// ===== MORSE =====
+function renderMorse(){
+var morse={'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---','K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-','U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..','0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....','6':'-....','7':'--...','8':'---..','9':'----.',' ':'/'};
+var rev={};for(var k in morse)rev[morse[k]]=k;
+function aMorse(){var t=document.getElementById('mrText').value.toUpperCase(),r='',i;for(i=0;i<t.length;i++){var c=t[i];r+=morse[c]||c;r+=' ';}
+document.getElementById('mrRes').innerHTML='<div class="hash-output">'+r.trim()+'</div>';}
+function aTexto(){var t=document.getElementById('mrText').value.trim().split(' '),r='',i;for(i=0;i<t.length;i++){var m=t[i];r+=rev[m]||m;}
+document.getElementById('mrRes').innerHTML='<div class="hash-output">'+r+'</div>';}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Texto o código Morse</label><input type="text" id="mrText" placeholder="HOLA ... --- .-.. .-"></div>'+
+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn-primary" id="btnMrEnc">A Morse</button><button class="btn-primary" id="btnMrDec">A Texto</button></div>'+
+'<div class="resultado" id="mrRes"></div></div>';
+document.getElementById('btnMrEnc').addEventListener('click',aMorse);document.getElementById('btnMrDec').addEventListener('click',aTexto);}
+
+// ===== FRACCIÓN =====
+function renderFraccion(){
+function mcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
+function calc(){var n1=g('frN1')||1,d1=g('frD1')||1,n2=g('frN2')||1,d2=g('frD2')||1,op=document.getElementById('frOp').value;
+var rn,rd;switch(op){
+case'+':rn=n1*d2+n2*d1;rd=d1*d2;break;
+case'-':rn=n1*d2-n2*d1;rd=d1*d2;break;
+case'*':rn=n1*n2;rd=d1*d2;break;
+case'/':rn=n1*d2;rd=d1*n2;break;}
+var div=mcd(rn,rd);rn/=div;rd/=div;var ent=0;
+if(rd<0){rn=-rn;rd=-rd;}
+if(Math.abs(rn)>=rd){ent=Math.floor(rn/rd);rn=rn%rd;}
+var res='<div class="valor-grande">';if(ent)res+=ent+' ';if(rn)res+=Math.abs(rn)+'/'+rd;else if(!ent)res+='0';
+res+='</div>';if(ent&&rn)res+='<div class="valor-sec">'+Math.abs(rn)+'/'+rd+'</div>';
+document.getElementById('frRes').innerHTML=res;}
+app.innerHTML='<div class="calc-form"><div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center">'+
+'<div><div class="form-row"><label>Numerador 1</label><input type="number" id="frN1" value="1"></div><div class="form-row"><label>Denominador 1</label><input type="number" id="frD1" value="2"></div></div>'+
+'<div style="text-align:center;font-size:1.5rem"><select id="frOp" style="font-size:1.5rem;padding:4px;border-radius:6px;border:1px solid var(--borde);background:var(--card2);color:var(--text)"><option value="+">+</option><option value="-">−</option><option value="*">×</option><option value="/">÷</option></select></div>'+
+'<div><div class="form-row"><label>Numerador 2</label><input type="number" id="frN2" value="1"></div><div class="form-row"><label>Denominador 2</label><input type="number" id="frD2" value="3"></div></div></div>'+
+'<button class="btn-primary" id="btnFR">Calcular</button><div class="resultado" id="frRes"></div></div>';
+document.getElementById('btnFR').addEventListener('click',calc);calc();}
 
 // ===== Dispatch =====
 var modes={
