@@ -10,11 +10,11 @@ function g(id){return parseFloat(document.getElementById(id).value)||0;}
 
 // ===== PORCENTAJE =====
 function renderPorcentaje(){
-app.innerHTML='<div class="calc-form"><div class="tabs" id="pTabs">'+
-'<button class="tab active" data-tab="basico">Básico</button>'+
-'<button class="tab" data-tab="descuento">Descuento</button>'+
-'<button class="tab" data-tab="cambio">Cambio %</button>'+
-'<button class="tab" data-tab="propina">Propina</button></div>'+
+'<div class="tabs" id="pTabs">'+
+'<button class="tab active" data-tab="Basico">Básico</button>'+
+'<button class="tab" data-tab="Desc">Descuento</button>'+
+'<button class="tab" data-tab="Cambio">Cambio %</button>'+
+'<button class="tab" data-tab="Prop">Propina</button></div>'
 '<div class="panel active" id="pBasico"><div class="form-row"><label>Valor</label><input type="number" id="pVal" placeholder="200"></div>'+
 '<div class="form-row"><label>Porcentaje</label><input type="number" id="pPct" placeholder="15"></div>'+
 '<button class="btn-primary" id="btnP">Calcular</button><div class="resultado" id="pRes"></div></div>'+
