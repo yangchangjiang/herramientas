@@ -445,6 +445,332 @@ app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número</labe
 document.getElementById('btnNC').addEventListener('click',function(){var n=g('ncNum');if(!n)return;
 document.getElementById('ncRes').innerHTML='<div class="valor-grande">'+n.toExponential(4)+'</div><div class="valor-sec">'+n.toLocaleString('es-ES')+'</div>';});}
 
+
+// ===== DESVIACIÓN ESTÁNDAR =====
+function renderDesviacion(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Números (separados por coma)</label><input type="text" id="dvNums" value="10, 20, 30, 40, 50"></div>'+
+'<button class="btn-primary" id="btnDV">Calcular</button><div class="resultado" id="dvRes"></div></div>';
+document.getElementById('btnDV').addEventListener('click',function(){
+var n=document.getElementById('dvNums').value.split(',').map(function(x){return parseFloat(x.trim())}).filter(function(x){return!isNaN(x)});
+if(!n.length)return;var m=n.reduce(function(a,b){return a+b},0)/n.length;
+var v=n.reduce(function(a,b){return a+(b-m)*(b-m)},0)/n.length;
+var sd=Math.sqrt(v);
+document.getElementById('dvRes').innerHTML='<div class="valor-grande">'+sd.toFixed(4)+'</div><div class="valor-sec">Media: '+m.toFixed(2)+' | Varianza: '+v.toFixed(4)+' | n='+n.length+'</div>';});}
+
+// ===== REGLA DE TRES =====
+function renderRegla3(){
+app.innerHTML='<div class="calc-form"><div style="display:grid;grid-template-columns:1fr auto 1fr;gap:8px;align-items:center;margin-bottom:12px">'+
+'<div class="form-row"><label>A</label><input type="number" id="r3a" value="2" step="any"></div><div style="text-align:center;font-size:1.3rem">→</div>'+
+'<div class="form-row"><label>B</label><input type="number" id="r3b" value="8" step="any"></div>'+
+'<div class="form-row"><label>C</label><input type="number" id="r3c" value="5" step="any"></div><div style="text-align:center;font-size:1.3rem">→</div>'+
+'<div class="form-row"><label>X = ?</label><div class="valor-grande" id="r3x" style="padding:8px">20</div></div></div>'+
+'<button class="btn-primary" id="btnR3">Calcular</button></div>';
+function calc(){var a=g('r3a'),b=g('r3b'),c=g('r3c');if(!a)return;
+document.getElementById('r3x').textContent=(b*c/a).toFixed(4);}
+document.getElementById('btnR3').addEventListener('click',calc);calc();}
+
+// ===== HIPOTENUSA =====
+function renderHipotenusa(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Cateto A</label><input type="number" id="hpA" value="3" step="any"></div>'+
+'<div class="form-row"><label>Cateto B</label><input type="number" id="hpB" value="4" step="any"></div>'+
+'<button class="btn-primary" id="btnHP">Calcular</button><div class="resultado"><div class="valor-grande" id="hpRes">5</div></div></div>';
+function calc(){var a=g('hpA'),b=g('hpB');document.getElementById('hpRes').textContent=Math.sqrt(a*a+b*b).toFixed(4);}
+document.getElementById('btnHP').addEventListener('click',calc);calc();}
+
+// ===== ÁREA =====
+function renderArea(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Figura</label><select id="arFig"><option value="circulo">Círculo</option><option value="cuadrado">Cuadrado</option><option value="rectangulo">Rectángulo</option><option value="triangulo">Triángulo</option><option value="trapecio">Trapecio</option></select></div>'+
+'<div id="arInputs"><div class="form-row"><label>Radio (r)</label><input type="number" id="ar1" value="5" step="any"></div></div>'+
+'<button class="btn-primary" id="btnAR">Calcular</button><div class="resultado" id="arRes"></div></div>';
+function upd(){var f=document.getElementById('arFig').value;var h='';var labels={circulo:['Radio (r)'],cuadrado:['Lado'],rectangulo:['Base','Altura'],triangulo:['Base','Altura'],trapecio:['Base mayor','Base menor','Altura']};
+labels[f].forEach(function(l,i){h+='<div class="form-row"><label>'+l+'</label><input type="number" id="ar'+(i+1)+'" value="5" step="any"></div>';});
+document.getElementById('arInputs').innerHTML=h;}
+function calc(){var f=document.getElementById('arFig').value;var v1=g('ar1')||0,v2=g('ar2')||0,v3=g('ar3')||0;var area=0,per=0;
+switch(f){case'circulo':area=Math.PI*v1*v1;per=2*Math.PI*v1;break;case'cuadrado':area=v1*v1;per=4*v1;break;case'rectangulo':area=v1*v2;per=2*(v1+v2);break;case'triangulo':area=v1*v2/2;per=0;break;case'trapecio':area=(v1+v2)*v3/2;per=0;break;}
+document.getElementById('arRes').innerHTML='<div class="valor-grande">Área: '+area.toFixed(2)+'</div><div class="valor-sec">'+(per?'Perímetro: '+per.toFixed(2):'')+'</div>';}
+document.getElementById('arFig').addEventListener('change',function(){upd();calc();});
+document.getElementById('btnAR').addEventListener('click',calc);upd();calc();}
+
+// ===== VOLUMEN =====
+function renderVolumen(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Figura</label><select id="vlFig"><option value="cubo">Cubo</option><option value="esfera">Esfera</option><option value="cilindro">Cilindro</option><option value="cono">Cono</option></select></div>'+
+'<div id="vlInputs"><div class="form-row"><label>Lado</label><input type="number" id="vl1" value="5" step="any"></div></div>'+
+'<button class="btn-primary" id="btnVL">Calcular</button><div class="resultado" id="vlRes"></div></div>';
+function upd(){var f=document.getElementById('vlFig').value;var h='';var lbs={cubo:['Lado'],esfera:['Radio'],cilindro:['Radio','Altura'],cono:['Radio','Altura']};
+lbs[f].forEach(function(l,i){h+='<div class="form-row"><label>'+l+'</label><input type="number" id="vl'+(i+1)+'" value="5" step="any"></div>';});
+document.getElementById('vlInputs').innerHTML=h;}
+function calc(){var f=document.getElementById('vlFig').value;var v1=g('vl1')||0,v2=g('vl2')||0,v=0;
+switch(f){case'cubo':v=v1*v1*v1;break;case'esfera':v=4/3*Math.PI*v1*v1*v1;break;case'cilindro':v=Math.PI*v1*v1*v2;break;case'cono':v=Math.PI*v1*v1*v2/3;break;}
+document.getElementById('vlRes').innerHTML='<div class="valor-grande">'+v.toFixed(2)+' u³</div>';}
+document.getElementById('vlFig').addEventListener('change',function(){upd();calc();});
+document.getElementById('btnVL').addEventListener('click',calc);upd();calc();}
+
+// ===== FACTORIAL =====
+function renderFactorial(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número (n)</label><input type="number" id="ftN" value="10" min="0" max="170"></div>'+
+'<button class="btn-primary" id="btnFT">Calcular</button><div class="resultado" id="ftRes"></div></div>';
+document.getElementById('btnFT').addEventListener('click',function(){var n=g('ftN');if(n>170)return;var r=1,i;for(i=2;i<=n;i++)r*=i;
+document.getElementById('ftRes').innerHTML='<div class="valor-grande">'+r.toExponential(6)+'</div>';});}
+
+// ===== COMBINACIONES =====
+function renderCombinaciones(){
+function fact(n){var r=1,i;for(i=2;i<=n;i++)r*=i;return r;}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>n (total)</label><input type="number" id="cbN" value="10" min="1" max="100"></div>'+
+'<div class="form-row"><label>r (selección)</label><input type="number" id="cbR" value="3" min="1" max="100"></div>'+
+'<div style="display:flex;gap:8px"><button class="btn-primary" id="btnCbn">Combinaciones</button><button class="btn-primary" id="btnCbp">Permutaciones</button></div>'+
+'<div class="resultado" id="cbRes"></div></div>';
+document.getElementById('btnCbn').addEventListener('click',function(){var n=g('cbN'),r=g('cbR');if(n<r)return;
+document.getElementById('cbRes').innerHTML='<div class="valor-grande">C('+n+','+r+') = '+fact(n)/(fact(r)*fact(n-r))+'</div>';});
+document.getElementById('btnCbp').addEventListener('click',function(){var n=g('cbN'),r=g('cbR');if(n<r)return;
+document.getElementById('cbRes').innerHTML='<div class="valor-grande">P('+n+','+r+') = '+fact(n)/fact(n-r)+'</div>';});}
+
+// ===== MCM MCD =====
+function renderMcm(){
+function mcd(a,b){a=Math.abs(a);b=Math.abs(b);while(b){var t=b;b=a%b;a=t;}return a;}
+function mcm(a,b){return a*b/mcd(a,b);}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número 1</label><input type="number" id="mmN1" value="12"></div>'+
+'<div class="form-row"><label>Número 2</label><input type="number" id="mmN2" value="18"></div>'+
+'<button class="btn-primary" id="btnMM">Calcular</button><div class="resultado" id="mmRes"></div></div>';
+document.getElementById('btnMM').addEventListener('click',function(){var a=g('mmN1'),b=g('mmN2');
+document.getElementById('mmRes').innerHTML='<div class="valor-grande">MCD: '+mcd(a,b)+'</div><div class="valor-sec">MCM: '+mcm(a,b)+'</div>';});}
+
+// ===== PRIMOS =====
+function renderPrimos(){
+function esPrimo(n){if(n<2)return false;if(n%2===0)return n===2;var i;for(i=3;i*i<=n;i+=2)if(n%i===0)return false;return true;}
+function generar(n){var r=[],c=0,i=2;while(c<n){if(esPrimo(i)){r.push(i);c++;}i++;}return r.join(', ');}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número</label><input type="number" id="prN" value="17"></div>'+
+'<button class="btn-primary" id="btnPrC">Comprobar</button><div class="resultado" id="prRes"></div>'+
+'<div class="form-row" style="margin-top:16px"><label>Generar N primos</label><input type="number" id="prGen" value="10" min="1" max="50"></div>'+
+'<button class="btn-primary" id="btnPrG">Generar</button><div class="resultado" id="prGenRes"></div></div>';
+document.getElementById('btnPrC').addEventListener('click',function(){var n=g('prN');
+document.getElementById('prRes').innerHTML='<div class="valor-grande">'+n+' '+(esPrimo(n)?'es primo':'no es primo')+'</div>';});
+document.getElementById('btnPrG').addEventListener('click',function(){var n=g('prGen')||10;
+document.getElementById('prGenRes').innerHTML='<div class="hash-output" style="font-size:.82rem">'+generar(n)+'</div>';});}
+
+// ===== CUADRÁTICA =====
+function renderCuadratica(){
+app.innerHTML='<div class="calc-form"><div style="text-align:center;font-size:1.2rem;margin-bottom:12px">ax² + bx + c = 0</div>'+
+'<div class="form-row"><label>a</label><input type="number" id="cqA" value="1" step="any"></div>'+
+'<div class="form-row"><label>b</label><input type="number" id="cqB" value="5" step="any"></div>'+
+'<div class="form-row"><label>c</label><input type="number" id="cqC" value="6" step="any"></div>'+
+'<button class="btn-primary" id="btnCQ">Resolver</button><div class="resultado" id="cqRes"></div></div>';
+document.getElementById('btnCQ').addEventListener('click',function(){var a=g('cqA'),b=g('cqB'),c=g('cqC');if(!a)return;
+var d=b*b-4*a*c;if(d<0){document.getElementById('cqRes').innerHTML='<div class="valor-grande">Sin solución real</div>';return;}
+var x1=(-b+Math.sqrt(d))/(2*a),x2=(-b-Math.sqrt(d))/(2*a);
+document.getElementById('cqRes').innerHTML='<div class="valor-grande">x₁ = '+x1.toFixed(4)+'</div><div class="valor-sec">x₂ = '+x2.toFixed(4)+'</div>';});}
+
+// ===== PARTO =====
+function renderParto(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Primer día de última menstruación</label><input type="date" id="ptFecha"></div>'+
+'<button class="btn-primary" id="btnPT">Calcular</button><div class="resultado" id="ptRes"></div></div>';
+document.getElementById('btnPT').addEventListener('click',function(){var v=document.getElementById('ptFecha').value;if(!v)return;
+var f=new Date(v);var parto=new Date(f);parto.setDate(parto.getDate()+280);
+var hoy=new Date();var diff=Math.floor((hoy-f)/(86400000));var semanas=Math.floor(diff/7);var dias=diff%7;
+document.getElementById('ptRes').innerHTML='<div class="valor-grande">Fecha probable: '+parto.toLocaleDateString('es-ES')+'</div><div class="valor-sec">Semana '+semanas+'+'+dias+' ('+diff+' días)</div>';});}
+
+// ===== PESO IDEAL =====
+function renderPesoideal(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Altura (cm)</label><input type="number" id="piAlt" value="170" step="0.1"></div>'+
+'<div class="form-row"><label>Edad</label><input type="number" id="piEdad" value="30"></div>'+
+'<div class="form-row"><label>Sexo</label><select id="piSexo"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>'+
+'<button class="btn-primary" id="btnPI">Calcular</button><div class="resultado" id="piRes"></div></div>';
+document.getElementById('btnPI').addEventListener('click',function(){var h=g('piAlt'),e=g('piEdad'),s=document.getElementById('piSexo').value;
+var dev=s==='M'?50:45.5;var pi=dev+2.3*((h/2.54)-60);
+document.getElementById('piRes').innerHTML='<div class="valor-grande">'+pi.toFixed(1)+' kg</div><div class="valor-sec">Fórmula de Devine</div>';});}
+
+// ===== CALORÍAS =====
+function renderCalorias(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Sexo</label><select id="clSexo"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>'+
+'<div class="form-row"><label>Peso (kg)</label><input type="number" id="clPeso" value="70" step="0.1"></div>'+
+'<div class="form-row"><label>Altura (cm)</label><input type="number" id="clAlt" value="175" step="0.1"></div>'+
+'<div class="form-row"><label>Edad</label><input type="number" id="clEdad" value="30"></div>'+
+'<div class="form-row"><label>Actividad</label><select id="clAct"><option value="1.2">Sedentario</option><option value="1.375">Ligero</option><option value="1.55">Moderado</option><option value="1.725">Activo</option><option value="1.9">Muy activo</option></select></div>'+
+'<button class="btn-primary" id="btnCL">Calcular</button><div class="resultado" id="clRes"></div></div>';
+document.getElementById('btnCL').addEventListener('click',function(){var p=g('clPeso'),h=g('clAlt'),e=g('clEdad'),s=document.getElementById('clSexo').value,a=parseFloat(document.getElementById('clAct').value);
+var tmb=s==='M'?10*p+6.25*h-5*e+5:10*p+6.25*h-5*e-161;
+document.getElementById('clRes').innerHTML='<div class="valor-grande">'+Math.round(tmb*a)+' kcal/día</div><div class="valor-sec">TMB: '+Math.round(tmb)+' kcal | Factor: '+a+'</div>';});}
+
+// ===== ZAPATO =====
+function renderZapato(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Longitud del pie (cm)</label><input type="number" id="zpCm" value="26" step="0.1"></div>'+
+'<div class="form-row"><label>Sistema</label><select id="zpSys"><option value="eu">EU</option><option value="us">US (hombre)</option><option value="uk">UK</option></select></div>'+
+'<button class="btn-primary" id="btnZP">Convertir</button><div class="resultado" id="zpRes"></div></div>';
+document.getElementById('btnZP').addEventListener('click',function(){var cm=g('zpCm'),s=document.getElementById('zpSys').value;
+var eu=Math.round(cm*1.5+1);var us=Math.round(cm*1.5-16);var uk=Math.round(cm*1.5-17);
+var res='<div class="valor-grande">';if(s==='eu')res+=eu+' EU';else if(s==='us')res+=us+' US';else res+=uk+' UK';
+res+='</div><div class="valor-sec">EU: '+eu+' | US: '+us+' | UK: '+uk+'</div>';
+document.getElementById('zpRes').innerHTML=res;});}
+
+// ===== ROT13 =====
+function renderRot13(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Texto</label><input type="text" id="r13Text" placeholder="Hola Mundo"></div>'+
+'<button class="btn-primary" id="btnR13">Codificar</button><div class="resultado"><div class="hash-output" id="r13Res"></div></div></div>';
+document.getElementById('btnR13').addEventListener('click',function(){var t=document.getElementById('r13Text').value;
+var r='',i;for(i=0;i<t.length;i++){var c=t.charCodeAt(i);if(c>=65&&c<=90)r+=String.fromCharCode((c-65+13)%26+65);
+else if(c>=97&&c<=122)r+=String.fromCharCode((c-97+13)%26+97);else r+=t[i];}
+document.getElementById('r13Res').textContent=r;});}
+
+// ===== CÉSAR =====
+function renderCesar(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Texto</label><input type="text" id="csText" placeholder="Hola Mundo"></div>'+
+'<div class="form-row"><label>Desplazamiento</label><input type="number" id="csShift" value="3" min="1" max="25"></div>'+
+'<button class="btn-primary" id="btnCS">Codificar</button><div class="resultado"><div class="hash-output" id="csRes"></div></div></div>';
+document.getElementById('btnCS').addEventListener('click',function(){var t=document.getElementById('csText').value,s=parseInt(document.getElementById('csShift').value)||3;
+var r='',i;for(i=0;i<t.length;i++){var c=t.charCodeAt(i);if(c>=65&&c<=90)r+=String.fromCharCode((c-65+s)%26+65);
+else if(c>=97&&c<=122)r+=String.fromCharCode((c-97+s)%26+97);else r+=t[i];}
+document.getElementById('csRes').textContent=r;});}
+
+// ===== PALÍNDROMO =====
+function renderPalindromo(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Palabra o frase</label><input type="text" id="plText" value="Anita lava la tina"></div>'+
+'<button class="btn-primary" id="btnPL">Comprobar</button><div class="resultado" id="plRes"></div></div>';
+document.getElementById('btnPL').addEventListener('click',function(){var t=document.getElementById('plText').value;
+var c=t.toLowerCase().replace(/[^a-z0-9]/g,'');var r=c.split('').reverse().join('');
+var es=c===r;document.getElementById('plRes').innerHTML='<div class="valor-grande">'+(es?'✅ Sí es palíndromo':'❌ No es palíndromo')+'</div>';});}
+
+// ===== PASSWORD CHECK =====
+function renderPasswordcheck(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Contraseña</label><input type="text" id="pwText" placeholder="Escribe una contraseña"></div>'+
+'<button class="btn-primary" id="btnPWC">Evaluar</button><div class="resultado" id="pwcRes"></div></div>';
+document.getElementById('btnPWC').addEventListener('click',function(){var t=document.getElementById('pwText').value||'';
+var l=t.length,may=(t.match(/[A-Z]/g)||[]).length,min=(t.match(/[a-z]/g)||[]).length,num=(t.match(/[0-9]/g)||[]).length,sim=(t.match(/[^A-Za-z0-9]/g)||[]).length;
+var pts=0;if(l>=8)pts+=25;if(l>=12)pts+=15;if(l>=16)pts+=10;if(may>0)pts+=10;if(min>0)pts+=10;if(num>0)pts+=10;if(sim>0)pts+=10;if(l>=12&&may>0&&num>0&&sim>0)pts+=10;
+var nivel,color,c=pts>75?'#10b981':pts>50?'#f59e0b':pts>25?'#f97316':'#ef4444';
+if(pts>=80)nivel='Muy fuerte';else if(pts>=60)nivel='Fuerte';else if(pts>=40)nivel='Media';else if(pts>=20)nivel='Débil';else nivel='Muy débil';
+document.getElementById('pwcRes').innerHTML='<div style="background:var(--card2);border-radius:8px;padding:16px">'+
+'<div style="height:8px;background:#e2e8f0;border-radius:4px;margin-bottom:8px"><div style="height:8px;width:'+pts+'%;background:'+c+';border-radius:4px;transition:width .3s"></div></div>'+
+'<div class="valor-grande" style="font-size:1.1rem;color:'+c+'">'+nivel+' ('+pts+'/100)</div>'+
+'<div class="valor-sec" style="font-size:.78rem">'+l+' chars | '+may+' may | '+min+' min | '+num+' num | '+sim+' sim</div></div>';});}
+
+// ===== BINARIO/TEXTO =====
+function renderBintext(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Texto</label><input type="text" id="btText" value="Hola"></div>'+
+'<button class="btn-primary" id="btnBtE">A Binario</button><button class="btn-primary" id="btnBtD">A Texto</button><div class="resultado" id="btRes"></div>'+
+'<div class="form-row" style="margin-top:16px"><label>Binario</label><input type="text" id="btBin" value="01001000 01101111 01101100 01100001"></div>'+
+'<button class="btn-primary" id="btnBtB">Decodificar</button><div class="resultado" id="btBinRes"></div></div>';
+document.getElementById('btnBtE').addEventListener('click',function(){var t=document.getElementById('btText').value;
+var r='',i;for(i=0;i<t.length;i++)r+=t.charCodeAt(i).toString(2).padStart(8,'0')+' ';
+document.getElementById('btRes').innerHTML='<div class="hash-output">'+r.trim()+'</div>';});
+document.getElementById('btnBtD').addEventListener('click',function(){var t=document.getElementById('btBin').value;
+var b=t.split(' ').filter(function(x){return x});var r='',i;for(i=0;i<b.length;i++)r+=String.fromCharCode(parseInt(b[i],2));
+document.getElementById('btBinRes').innerHTML='<div class="hash-output">'+r+'</div>';});
+document.getElementById('btnBtB').addEventListener('click',function(){document.getElementById('btnBtD').click();});}
+
+// ===== LISTA ALEATORIA =====
+function renderListrandom(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Elementos (uno por línea)</label><textarea id="lrItems" rows="6" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text)">Ana
+Luis
+Carlos
+María
+Pedro</textarea></div>'+
+'<button class="btn-primary" id="btnLR">Ordenar al azar</button><div class="resultado" id="lrRes"></div></div>';
+document.getElementById('btnLR').addEventListener('click',function(){var t=document.getElementById('lrItems').value.split('
+').filter(function(l){return l.trim()});
+if(!t.length)return;var a=[].concat(t),i;for(i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}
+document.getElementById('lrRes').innerHTML='<div class="hash-output">'+a.join('<br>')+'</div>';});}
+
+// ===== INVERSIÓN =====
+function renderInversion(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Capital inicial ($)</label><input type="number" id="ivCap" value="10000" step="any"></div>'+
+'<div class="form-row"><label>Tasa anual (%)</label><input type="number" id="ivTasa" value="8" step="0.1"></div>'+
+'<div class="form-row"><label>Años</label><input type="number" id="ivAnios" value="10"></div>'+
+'<button class="btn-primary" id="btnIV">Calcular</button><div class="resultado" id="ivRes"></div></div>';
+document.getElementById('btnIV').addEventListener('click',function(){var P=g('ivCap'),r=g('ivTasa')/100,t=g('ivAnios');
+var fv=P*Math.pow(1+r,t);document.getElementById('ivRes').innerHTML='<div class="valor-grande">$'+fv.toFixed(2)+'</div><div class="valor-sec">Ganancia: $'+(fv-P).toFixed(2)+'</div>';});}
+
+// ===== AHORRO =====
+function renderAhorro(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Meta ($)</label><input type="number" id="ahMeta" value="10000" step="any"></div>'+
+'<div class="form-row"><label>Mensual ($)</label><input type="number" id="ahMes" value="500" step="any"></div>'+
+'<div class="form-row"><label>Tasa anual (%)</label><input type="number" id="ahTasa" value="3" step="0.1"></div>'+
+'<button class="btn-primary" id="btnAH">Calcular</button><div class="resultado" id="ahRes"></div></div>';
+document.getElementById('btnAH').addEventListener('click',function(){var M=g('ahMeta'),pmt=g('ahMes'),r=g('ahTasa')/100/12;
+var meses=0,acum=0;while(acum<M&&meses<600){acum=(acum+pmt)*(1+r);meses++;}
+document.getElementById('ahRes').innerHTML='<div class="valor-grande">'+meses+' meses ('+Math.round(meses/12)+' años)</div><div class="valor-sec">Ahorrando $'+pmt.toFixed(2)+'/mes</div>';});}
+
+// ===== SALARIO =====
+function renderSalario(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Salario</label><input type="number" id="slVal" value="30000" step="any"></div>'+
+'<div class="form-row"><label>Período</label><select id="slPer"><option value="anual">Anual</option><option value="mensual">Mensual</option><option value="semanal">Semanal</option><option value="hora">Por hora</option></select></div>'+
+'<div class="form-row"><label>Horas/semana</label><input type="number" id="slHoras" value="40"></div>'+
+'<button class="btn-primary" id="btnSL">Convertir</button><div class="resultado" id="slRes"></div></div>';
+document.getElementById('btnSL').addEventListener('click',function(){var v=g('slVal'),p=document.getElementById('slPer').value,h=g('slHoras');
+var anual,men,sem,hora;if(p==='anual'){anual=v;men=v/12;sem=v/52;hora=v/(52*h);}
+else if(p==='mensual'){men=v;anual=v*12;sem=v*12/52;hora=v*12/(52*h);}
+else if(p==='semanal'){sem=v;anual=v*52;men=v*52/12;hora=v/h;}
+else{hora=v;sem=v*h;anual=v*h*52;men=v*h*52/12;}
+document.getElementById('slRes').innerHTML='<div class="valor-grande">$'+hora.toFixed(2)+'/hora</div><div class="valor-sec">$'+men.toFixed(2)+'/mes | $'+sem.toFixed(2)+'/sem | $'+anual.toFixed(2)+'/año</div>';});}
+
+// ===== FECHA + DÍAS =====
+function renderFechamas(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Fecha</label><input type="date" id="fmFecha"></div>'+
+'<div class="form-row"><label>Días a sumar/restar</label><input type="number" id="fmDias" value="30"></div>'+
+'<button class="btn-primary" id="btnFM">Calcular</button><div class="resultado" id="fmRes"></div></div>';
+document.getElementById('btnFM').addEventListener('click',function(){var v=document.getElementById('fmFecha').value;if(!v)return;
+var f=new Date(v);var d=g('fmDias')||0;f.setDate(f.getDate()+d);
+document.getElementById('fmRes').innerHTML='<div class="valor-grande">'+f.toLocaleDateString('es-ES')+'</div>';});}
+
+// ===== DÍAS LABORABLES =====
+function renderLaborables(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Fecha inicio</label><input type="date" id="lbIni"></div>'+
+'<div class="form-row"><label>Fecha fin</label><input type="date" id="lbFin"></div>'+
+'<button class="btn-primary" id="btnLB">Calcular</button><div class="resultado" id="lbRes"></div></div>';
+document.getElementById('btnLB').addEventListener('click',function(){var a=document.getElementById('lbIni').value,b=document.getElementById('lbFin').value;if(!a||!b)return;
+var d1=new Date(a),d2=new Date(b);var lab=0,tot=0;while(d1<=d2){var dia=d1.getDay();if(dia>0&&dia<6)lab++;tot++;d1.setDate(d1.getDate()+1);}
+document.getElementById('lbRes').innerHTML='<div class="valor-grande">'+lab+' días laborables</div><div class="valor-sec">De '+tot+' días totales</div>';});}
+
+// ===== MASCOTA =====
+function renderMascota(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Edad humana (años)</label><input type="number" id="mcEdad" value="5" min="0" max="30"></div>'+
+'<div class="form-row"><label>Tipo</label><select id="mcTipo"><option value="perro">Perro</option><option value="gato">Gato</option></select></div>'+
+'<div class="form-row"><label>Tamaño (perro)</label><select id="mcTam"><option value="peq">Pequeño (&lt;10kg)</option><option value="med">Mediano</option><option value="gra">Grande (≥25kg)</option></select></div>'+
+'<button class="btn-primary" id="btnMC">Calcular</button><div class="resultado" id="mcRes"></div></div>';
+document.getElementById('btnMC').addEventListener('click',function(){var e=g('mcEdad'),t=document.getElementById('mcTipo').value,tam=document.getElementById('mcTam').value;
+if(t==='gato'){var ge=1;if(e>=1)ge=15;if(e>=2)ge=24;if(e>2)ge=24+(e-2)*4;document.getElementById('mcRes').innerHTML='<div class="valor-grande">'+ge+' años gatunos</div>';return;}
+var f=1;if(tam==='peq'){if(e===1)f=15;else if(e===2)f=24;else f=24+(e-2)*4;}
+else{f=1;if(e===1)f=15;else if(e===2)f=24;else f=24+(e-2)*5;}
+document.getElementById('mcRes').innerHTML='<div class="valor-grande">'+f+' años perrunos</div>';});}
+
+// ===== BISIESTO =====
+function renderBisiesto(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Año</label><input type="number" id="bsAnio" value="2024"></div>'+
+'<button class="btn-primary" id="btnBS">Comprobar</button><div class="resultado" id="bsRes"></div></div>';
+document.getElementById('btnBS').addEventListener('click',function(){var y=g('bsAnio');
+var es=(y%4===0&&y%100!==0)||y%400===0;
+document.getElementById('bsRes').innerHTML='<div class="valor-grande">'+(es?'✅ Sí es bisiesto ('+y+' tiene 366 días)':'❌ No es bisiesto ('+y+' tiene 365 días)')+'</div>';});}
+
+// ===== CARDÍACO =====
+function renderCardiaco(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Edad</label><input type="number" id="crEdad" value="30"></div>'+
+'<button class="btn-primary" id="btnCR">Calcular</button><div class="resultado" id="crRes"></div></div>';
+document.getElementById('btnCR').addEventListener('click',function(){var e=g('crEdad');
+var fcm=220-e;var z50=Math.round(fcm*0.5),z60=Math.round(fcm*0.6),z70=Math.round(fcm*0.7),z85=Math.round(fcm*0.85);
+document.getElementById('crRes').innerHTML='<table class="tabla-resultados"><thead><tr><th>Zona</th><th>% FCM</th><th>ppm</th></tr></thead><tbody>'+
+'<tr><td>Recuperación</td><td>50-60%</td><td>'+z50+'-'+z60+'</td></tr>'+
+'<tr><td>Quema de grasa</td><td>60-70%</td><td>'+z60+'-'+z70+'</td></tr>'+
+'<tr><td>Cardio</td><td>70-85%</td><td>'+z70+'-'+z85+'</td></tr>'+
+'<tr><td>Máximo</td><td>85-100%</td><td>'+z85+'-'+fcm+'</td></tr></tbody></table>';});}
+
+// ===== NOTA =====
+function renderNota(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Nota actual (%)</label><input type="number" id="ntAct" value="80" step="0.1" max="100"></div>'+
+'<div class="form-row"><label>Peso del examen (%)</label><input type="number" id="ntPeso" value="30" step="0.1"></div>'+
+'<div class="form-row"><label>Nota deseada (%)</label><input type="number" id="ntDes" value="85" step="0.1" max="100"></div>'+
+'<button class="btn-primary" id="btnNT">Calcular</button><div class="resultado" id="ntRes"></div></div>';
+document.getElementById('btnNT').addEventListener('click',function(){var a=g('ntAct'),p=g('ntPeso')/100,d=g('ntDes');
+var req=(d-(1-p)*a)/p;if(req>100)document.getElementById('ntRes').innerHTML='<div class="valor-grande" style="color:#ef4444">Imposible</div><div class="valor-sec">Necesitas >'+req.toFixed(1)+'%</div>';
+else document.getElementById('ntRes').innerHTML='<div class="valor-grande">'+req.toFixed(1)+'%</div>';});}
+
+// ===== HIPOTECA =====
+function renderHipoteca(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Monto ($)</label><input type="number" id="hpMonto" value="200000" step="any"></div>'+
+'<div class="form-row"><label>Tasa anual (%)</label><input type="number" id="hpTasa" value="3.5" step="0.1"></div>'+
+'<div class="form-row"><label>Plazo (años)</label><select id="hpPlazo"><option value="15">15 años</option><option value="20">20 años</option><option value="25">25 años</option><option value="30" selected>30 años</option></select></div>'+
+'<button class="btn-primary" id="btnHP">Calcular</button><div class="resultado" id="hpRes"></div></div>';
+document.getElementById('btnHP').addEventListener('click',function(){var P=g('hpMonto'),r=g('hpTasa')/100/12,n=g('hpPlazo')*12;
+var cuota=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);var total=cuota*n;var intereses=total-P;
+document.getElementById('hpRes').innerHTML='<div class="valor-grande">$'+cuota.toFixed(2)+'/mes</div><div class="valor-sec">Total: $'+total.toFixed(2)+' | Intereses: $'+intereses.toFixed(2)+'</div>';});}
+
 // ===== Dispatch =====
 var modes={
 porcentaje:renderPorcentaje,imc:renderIMC,interes:renderInteres,descuento:renderDescuento,
@@ -455,7 +781,15 @@ colorhex:renderColorhex,fecha:renderFecha,binario:renderBinario,
 divisas:renderDivisas,unidades:renderUnidades,qrcode:renderQrcode,diferencia:renderDiferencia,
 lorem:renderLorem,morse:renderMorse,fraccion:renderFraccion,
 iva:renderIva,romanos:renderRomanos,promedio:renderPromedio,combustible:renderCombustible,
-tiempo:renderTiempo,prestamo:renderPrestamo,potencia:renderPotencia,notacion:renderNotacion
+tiempo:renderTiempo,prestamo:renderPrestamo,potencia:renderPotencia,notacion:renderNotacion,
+desviacion:renderDesviacion,regla3:renderRegla3,hipotenusa:renderHipotenusa,area:renderArea,
+volumen:renderVolumen,factorial:renderFactorial,combinaciones:renderCombinaciones,mcm:renderMcm,
+primos:renderPrimos,cuadratica:renderCuadratica,parto:renderParto,pesoideal:renderPesoideal,
+calorias:renderCalorias,zapato:renderZapato,rot13:renderRot13,cesar:renderCesar,
+palindromo:renderPalindromo,passwordcheck:renderPasswordcheck,bintext:renderBintext,
+listrandom:renderListrandom,inversion:renderInversion,ahorro:renderAhorro,salario:renderSalario,
+fechamas:renderFechamas,laborables:renderLaborables,mascota:renderMascota,bisiesto:renderBisiesto,
+cardiaco:renderCardiaco,nota:renderNota,hipoteca:renderHipoteca
 };
 if(modes[mode])modes[mode]();
 })();
