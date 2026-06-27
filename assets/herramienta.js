@@ -232,14 +232,23 @@ document.getElementById('hexRes').innerHTML='<div style="background:#'+h+';heigh
 
 // ===== FECHA =====
 function renderFecha(){
-app.innerHTML='<div class="calc-form"><div class="form-row"><label>Fecha inicio</label><input type="date" id="fdStart"></div>'+
-'<div class="form-row"><label>Fecha fin</label><input type="date" id="fdEnd"></div>'+
+var meses=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+var dias=[];for(var d=1;d<=31;d++)dias.push(d);
+var hoy=new Date();
+function buildSelect(id,val,opts){var h='<select id="'+id+'" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text);font-size:.9rem">';opts.forEach(function(o,i){h+='<option value="'+(typeof o==='object'?o.v:o)+'"'+(i===val?' selected':'')+'>'+(typeof o==='object'?o.l:o)+'</option>';});h+='</select>';return h;}
+app.innerHTML='<div class="calc-form"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+'<div><div class="form-row"><label>Fecha inicio</label>'+buildSelect('fdSD',hoy.getDate()-1,dias)+buildSelect('fdSM',hoy.getMonth(),meses.map(function(m,i){return{v:i,l:m}}))+
+buildSelect('fdSY',10,function(){var y=[];for(var i=hoy.getFullYear()-100;i<=hoy.getFullYear()+10;i++)y.push(i);return y;}())+'</div></div>'+
+'<div><div class="form-row"><label>Fecha fin</label>'+buildSelect('fdED',hoy.getDate()-1,dias)+buildSelect('fdEM',hoy.getMonth(),meses.map(function(m,i){return{v:i,l:m}}))+
+buildSelect('fdEY',10,function(){var y=[];for(var i=hoy.getFullYear()-100;i<=hoy.getFullYear()+10;i++)y.push(i);return y;}())+'</div></div></div>'+
 '<button class="btn-primary" id="btnFD">Calcular</button><div class="resultado" id="fdRes"></div></div>';
 document.getElementById('btnFD').addEventListener('click',function(){
-var a=document.getElementById('fdStart').value,b=document.getElementById('fdEnd').value;if(!a||!b)return;
-var d1=new Date(a),d2=new Date(b);var diff=Math.abs(d2-d1);var days=Math.floor(diff/(86400000));
+var sd=parseInt(document.getElementById('fdSD').value),sm=parseInt(document.getElementById('fdSM').value),sy=parseInt(document.getElementById('fdSY').value);
+var ed=parseInt(document.getElementById('fdED').value),em=parseInt(document.getElementById('fdEM').value),ey=parseInt(document.getElementById('fdEY').value);
+var d1=new Date(sy,sm,sd),d2=new Date(ey,em,ed);var diff=Math.abs(d2-d1);var days=Math.floor(diff/(86400000));
 var years=Math.floor(days/365),months=Math.floor((days%365)/30),rdays=days%365%30;
-document.getElementById('fdRes').innerHTML='<div class="valor-grande">'+days+' días</div><div class="valor-sec">'+years+' años, '+months+' meses, '+rdays+' días</div>';});}
+document.getElementById('fdRes').innerHTML='<div class="valor-grande">'+days+' días</div><div class="valor-sec">'+years+' años, '+months+' meses, '+rdays+' días</div>';});
+document.getElementById('btnFD').click();}
 
 // ===== BINARIO =====
 function renderBinario(){
