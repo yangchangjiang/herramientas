@@ -1,0 +1,68 @@
+/* === Herramientas.cc — Spanish Tool Site === */
+:root{--bg:#f0f4f8;--card:#ffffff;--card2:#f8fafc;--borde:#dce2ec;--text:#1a202c;--text2:#5a6a7a;--accent:#2563eb;--accent2:#3b82f6;--success:#10b981;--warning:#f59e0b;--radius:12px;--shadow:0 2px 12px rgba(0,0,0,.06)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6;min-height:100vh}
+a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+.barra{display:flex;align-items:center;justify-content:space-between;max-width:1100px;margin:0 auto;padding:16px 20px;background:var(--card);border-bottom:1px solid var(--borde)}
+.marca{font-size:1.2rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+.icono{font-size:1.4rem}
+.nav{display:flex;gap:16px}
+.nav a{color:var(--text2);font-size:.88rem;padding:4px 0;border-bottom:2px solid transparent;transition:all .2s}
+.nav a:hover{color:var(--accent);border-bottom-color:var(--accent);text-decoration:none}
+.contenido{max-width:940px;margin:0 auto;padding:0 20px}
+main.contenido{padding:20px 0;min-height:70vh}
+.hero{text-align:center;padding:40px 0 24px}
+.hero h1{font-size:1.8rem;margin-bottom:8px;font-weight:700}
+.hero .sub{color:var(--text2);font-size:1rem;max-width:600px;margin:0 auto}
+.cuadricula{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;padding:16px 0}
+.tarjeta{display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--card);border:1px solid var(--borde);border-radius:var(--radius);padding:18px 12px;text-align:center;transition:all .2s;color:var(--text);box-shadow:var(--shadow)}
+.tarjeta:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 4px 16px rgba(37,99,235,.1);text-decoration:none}
+.tarjeta-icono{font-size:1.6rem}
+.tarjeta-nombre{font-size:.82rem;font-weight:500;line-height:1.3}
+.zona-herramienta{background:var(--card);border:1px solid var(--borde);border-radius:var(--radius);padding:24px;margin:16px 0;box-shadow:var(--shadow)}
+.relacionadas{padding:24px 0}
+.relacionadas h2{font-size:1.1rem;margin-bottom:12px}
+.pagina-texto{padding:20px 0;color:var(--text);line-height:1.8}
+.pagina-texto h2{font-size:1.3rem;margin:20px 0 10px}
+footer{border-top:1px solid var(--borde);padding:24px 0;margin-top:30px;text-align:center;font-size:.84rem;color:var(--text2)}
+.enlaces-foot{display:flex;gap:14px;justify-content:center;margin-top:6px}
+.enlaces-foot a{color:var(--text2)}
+
+/* SEO content */
+.seo-contenido{padding:20px 0;color:var(--text);line-height:1.8;max-width:700px;margin:0 auto}
+.seo-contenido h2{font-size:1.2rem;margin:20px 0 10px;color:var(--text)}
+.seo-contenido h3{font-size:1.05rem;margin:16px 0 8px;color:var(--text2)}
+.seo-contenido ul{margin:8px 0;padding-left:20px}
+.seo-contenido li{margin-bottom:4px}
+.seo-contenido p{margin-bottom:8px}
+
+/* Form elements */
+.calc-form{max-width:400px;margin:0 auto}
+.form-row{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
+.form-row label{font-size:.85rem;color:var(--text2);font-weight:500}
+.form-row input,.form-row select{background:var(--card2);border:1px solid var(--borde);border-radius:8px;padding:10px 14px;font-size:.95rem;color:var(--text);width:100%}
+.form-row input:focus,.form-row select:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.btn-primary{background:var(--accent);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:.9rem;font-weight:500;transition:all .2s}
+.btn-primary:hover{background:var(--accent2)}
+.resultado{padding:16px 0}
+.valor-grande{font-size:1.8rem;font-weight:700;color:var(--accent);margin-bottom:4px}
+.valor-sec{color:var(--text2);font-size:.9rem}
+.tabs{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:16px}
+.tab{background:var(--card2);border:1px solid var(--borde);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem;transition:all .2s}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.panel{display:none}
+.panel.active{display:block}
+.tabla-resultados{width:100%;border-collapse:collapse;margin-top:12px;font-size:.85rem}
+.tabla-resultados th{background:var(--card2);padding:8px 12px;text-align:left;border-bottom:2px solid var(--borde)}
+.tabla-resultados td{padding:8px 12px;border-bottom:1px solid var(--borde)}
+
+/* Tool-specific */
+.hash-output{background:var(--card2);border:1px solid var(--borde);border-radius:8px;padding:12px;margin-top:10px;font-family:monospace;font-size:.85rem;word-break:break-all}
+.qr-output{text-align:center;padding:16px}
+.dado-resultado{font-size:3rem;text-align:center;padding:24px;font-weight:700;color:var(--accent)}
+
+@media(max-width:640px){
+  .hero h1{font-size:1.4rem}
+  .cuadricula{grid-template-columns:repeat(auto-fill,minmax(110px,1fr))}
+  .barra{flex-direction:column;gap:8px}
+}
