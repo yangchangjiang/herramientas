@@ -360,6 +360,91 @@ app.innerHTML='<div class="calc-form"><div style="display:grid;grid-template-col
 '<button class="btn-primary" id="btnFR">Calcular</button><div class="resultado" id="frRes"></div></div>';
 document.getElementById('btnFR').addEventListener('click',calc);calc();}
 
+// ===== IVA =====
+function renderIva(){
+function calc(){var p=g('ivPrecio')||0,t=g('ivTasa')||21,op=document.getElementById('ivOp').value;
+var tasa=t/100;if(op=='add'){var iva=p*tasa;document.getElementById('ivRes').innerHTML='<div class="valor-grande">$'+(p+iva).toFixed(2)+'</div><div class="valor-sec">IVA: $'+iva.toFixed(2)+' | Base: $'+p.toFixed(2)+'</div>';}
+else{var base=p/(1+tasa);document.getElementById('ivRes').innerHTML='<div class="valor-grande">$'+base.toFixed(2)+'</div><div class="valor-sec">IVA: $'+(p-base).toFixed(2)+' | Total: $'+p.toFixed(2)+'</div>';}}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Cantidad</label><input type="number" id="ivPrecio" value="100" step="0.01"></div>'+
+'<div class="form-row"><label>Tasa IVA (%)</label><select id="ivTasa"><option value="21">21%</option><option value="10">10%</option><option value="4">4%</option><option value="0">0%</option></select></div>'+
+'<div class="form-row"><label>Operación</label><select id="ivOp"><option value="add">Añadir IVA</option><option value="remove">Quitar IVA</option></select></div>'+
+'<button class="btn-primary" id="btnIV">Calcular</button><div class="resultado" id="ivRes"></div></div>';
+document.getElementById('btnIV').addEventListener('click',calc);calc();}
+
+// ===== ROMANOS =====
+function renderRomanos(){
+var rNum=[{v:1000,r:'M'},{v:900,r:'CM'},{v:500,r:'D'},{v:400,r:'CD'},{v:100,r:'C'},{v:90,r:'XC'},{v:50,r:'L'},{v:40,r:'XL'},{v:10,r:'X'},{v:9,r:'IX'},{v:5,r:'V'},{v:4,r:'IV'},{v:1,r:'I'}];
+function toRoman(n){if(n<1||n>3999)return 'Error: 1-3999';var r='',i;for(i=0;i<rNum.length;i++){while(n>=rNum[i].v){r+=rNum[i].r;n-=rNum[i].v;}}return r;}
+function fromRoman(r){var n=0,i;for(i=0;i<rNum.length;i++){while(r.indexOf(rNum[i].r)===0){n+=rNum[i].v;r=r.substring(rNum[i].r.length);}}return n;}
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número decimal</label><input type="number" id="rmDec" value="2024" min="1" max="3999"></div>'+
+'<button class="btn-primary" id="btnRmD">A Romano</button><div class="resultado" id="rmDRes"><div class="valor-grande">MMXXIV</div></div>'+
+'<hr style="margin:16px 0;border-color:var(--borde)"><div class="form-row"><label>Número romano</label><input type="text" id="rmRom" placeholder="MMXXIV" value="MMXXIV"></div>'+
+'<button class="btn-primary" id="btnRmR">A Decimal</button><div class="resultado" id="rmRRes"><div class="valor-grande">2024</div></div></div>';
+document.getElementById('btnRmD').addEventListener('click',function(){var v=g('rmDec')||0;document.getElementById('rmDRes').innerHTML='<div class="valor-grande">'+toRoman(v)+'</div>';});
+document.getElementById('btnRmR').addEventListener('click',function(){var v=document.getElementById('rmRom').value.toUpperCase();document.getElementById('rmRRes').innerHTML='<div class="valor-grande">'+fromRoman(v)+'</div>';});}
+
+// ===== PROMEDIO =====
+function renderPromedio(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Números (separados por coma)</label><input type="text" id="prNums" value="10, 20, 30, 40, 50" placeholder="1, 2, 3"></div>'+
+'<button class="btn-primary" id="btnPR">Calcular</button><div class="resultado" id="prRes"></div></div>';
+document.getElementById('btnPR').addEventListener('click',function(){var t=document.getElementById('prNums').value;
+var n=t.split(',').map(function(x){return parseFloat(x.trim())}).filter(function(x){return!isNaN(x)});
+if(!n.length)return;var sum=n.reduce(function(a,b){return a+b},0);var avg=sum/n.length;
+var s=[].concat(n).sort(function(a,b){return a-b});var med;if(s.length%2)med=s[Math.floor(s.length/2)];else med=(s[s.length/2-1]+s[s.length/2])/2;
+var freq={},maxF=0,moda=[];n.forEach(function(v){freq[v]=(freq[v]||0)+1;if(freq[v]>maxF)maxF=freq[v];});
+Object.keys(freq).forEach(function(k){if(freq[k]===maxF)moda.push(parseFloat(k));});
+document.getElementById('prRes').innerHTML='<div class="valor-grande">Promedio: '+avg.toFixed(2)+'</div><div class="valor-sec">Mediana: '+med.toFixed(2)+'</div><div class="valor-sec">Moda: '+moda.join(', ')+'</div>';});}
+
+// ===== COMBUSTIBLE =====
+function renderCombustible(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Distancia (km)</label><input type="number" id="cbDist" value="300" step="0.1"></div>'+
+'<div class="form-row"><label>Consumo (L/100km)</label><input type="number" id="cbCons" value="8" step="0.1"></div>'+
+'<div class="form-row"><label>Precio por litro ($)</label><input type="number" id="cbPrice" value="1.8" step="0.01"></div>'+
+'<button class="btn-primary" id="btnCB">Calcular</button><div class="resultado" id="cbRes"></div></div>';
+document.getElementById('btnCB').addEventListener('click',function(){var d=g('cbDist'),c=g('cbCons'),p=g('cbPrice');
+var litros=d*c/100;var costo=litros*p;
+document.getElementById('cbRes').innerHTML='<div class="valor-grande">$'+costo.toFixed(2)+'</div><div class="valor-sec">Litros: '+litros.toFixed(1)+'</div>';});}
+
+// ===== TIEMPO =====
+function renderTiempo(){
+app.innerHTML='<div class="calc-form"><div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">'+
+'<div><div class="form-row"><label>Horas 1</label><input type="number" id="th1" value="2" min="0"></div><div class="form-row"><label>Minutos 1</label><input type="number" id="tm1" value="30" min="0" max="59"></div><div class="form-row"><label>Segundos 1</label><input type="number" id="ts1" value="15" min="0" max="59"></div></div>'+
+'<div><div class="form-row"><label>Horas 2</label><input type="number" id="th2" value="1" min="0"></div><div class="form-row"><label>Minutos 2</label><input type="number" id="tm2" value="45" min="0" max="59"></div><div class="form-row"><label>Segundos 2</label><input type="number" id="ts2" value="30" min="0" max="59"></div></div></div>'+
+'<div style="display:flex;gap:8px;margin-bottom:12px"><button class="btn-primary" id="btnTSum">Sumar</button><button class="btn-primary" id="btnTDif">Restar</button></div>'+
+'<div class="resultado" id="tiRes"></div></div>';
+function calc(op){var h1=g('th1'),m1=g('tm1'),s1=g('ts1'),h2=g('th2'),m2=g('tm2'),s2=g('ts2');
+var t1=h1*3600+m1*60+s1,t2=h2*3600+m2*60+s2;var r=op==='+'?t1+t2:t1-t2;if(r<0)r=0;
+var rh=Math.floor(r/3600),rm=Math.floor((r%3600)/60),rs=r%60;
+document.getElementById('tiRes').innerHTML='<div class="valor-grande">'+rh+'h '+rm+'m '+rs+'s</div>';}
+document.getElementById('btnTSum').addEventListener('click',function(){calc('+');});
+document.getElementById('btnTDif').addEventListener('click',function(){calc('-');});}
+
+// ===== PRÉSTAMO =====
+function renderPrestamo(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Monto del préstamo ($)</label><input type="number" id="plMonto" value="10000" step="any"></div>'+
+'<div class="form-row"><label>Tasa anual (%)</label><input type="number" id="plTasa" value="5" step="0.1"></div>'+
+'<div class="form-row"><label>Plazo (meses)</label><input type="number" id="plMeses" value="12" min="1"></div>'+
+'<button class="btn-primary" id="btnPL">Calcular</button><div class="resultado" id="plRes"></div></div>';
+document.getElementById('btnPL').addEventListener('click',function(){var P=g('plMonto'),r=g('plTasa')/100/12,n=g('plMeses');
+var cuota=P*r*Math.pow(1+r,n)/(Math.pow(1+r,n)-1);var total=cuota*n;var interes=total-P;
+document.getElementById('plRes').innerHTML='<div class="valor-grande">$'+cuota.toFixed(2)+'/mes</div><div class="valor-sec">Total: $'+total.toFixed(2)+' | Interés: $'+interes.toFixed(2)+'</div>';});}
+
+// ===== POTENCIA =====
+function renderPotencia(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número</label><input type="number" id="ptNum" value="16" step="any"></div>'+
+'<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"><button class="btn-primary" id="btnSq">Raíz²</button><button class="btn-primary" id="btnCb">Raíz³</button><button class="btn-primary" id="btnSqr">Al²</button></div>'+
+'<div class="resultado" id="ptRes"><div class="valor-grande">4</div></div></div>';
+document.getElementById('btnSq').addEventListener('click',function(){var n=g('ptNum');document.getElementById('ptRes').innerHTML='<div class="valor-grande">'+Math.sqrt(n).toFixed(4)+'</div>';});
+document.getElementById('btnCb').addEventListener('click',function(){var n=g('ptNum');document.getElementById('ptRes').innerHTML='<div class="valor-grande">'+Math.cbrt(n).toFixed(4)+'</div>';});
+document.getElementById('btnSqr').addEventListener('click',function(){var n=g('ptNum');document.getElementById('ptRes').innerHTML='<div class="valor-grande">'+(n*n).toFixed(4)+'</div>';});}
+
+// ===== NOTACIÓN CIENTÍFICA =====
+function renderNotacion(){
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Número</label><input type="number" id="ncNum" value="1234567" step="any"></div>'+
+'<button class="btn-primary" id="btnNC">Convertir</button><div class="resultado" id="ncRes"></div></div>';
+document.getElementById('btnNC').addEventListener('click',function(){var n=g('ncNum');if(!n)return;
+document.getElementById('ncRes').innerHTML='<div class="valor-grande">'+n.toExponential(4)+'</div><div class="valor-sec">'+n.toLocaleString('es-ES')+'</div>';});}
+
 // ===== Dispatch =====
 var modes={
 porcentaje:renderPorcentaje,imc:renderIMC,interes:renderInteres,descuento:renderDescuento,
@@ -368,7 +453,9 @@ dados:renderDados,moneda:renderMoneda,aleatorio:renderAleatorio,timestamp:render
 urlcode:renderUrlcode,base64:renderBase64,mayusculas:renderMayusculas,palabras:renderPalabras,
 colorhex:renderColorhex,fecha:renderFecha,binario:renderBinario,
 divisas:renderDivisas,unidades:renderUnidades,qrcode:renderQrcode,diferencia:renderDiferencia,
-lorem:renderLorem,morse:renderMorse,fraccion:renderFraccion
+lorem:renderLorem,morse:renderMorse,fraccion:renderFraccion,
+iva:renderIva,romanos:renderRomanos,promedio:renderPromedio,combustible:renderCombustible,
+tiempo:renderTiempo,prestamo:renderPrestamo,potencia:renderPotencia,notacion:renderNotacion
 };
 if(modes[mode])modes[mode]();
 })();
