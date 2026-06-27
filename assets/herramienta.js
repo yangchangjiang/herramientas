@@ -658,14 +658,9 @@ document.getElementById('btnBtB').addEventListener('click',function(){document.g
 
 // ===== LISTA ALEATORIA =====
 function renderListrandom(){
-app.innerHTML='<div class="calc-form"><div class="form-row"><label>Elementos (uno por línea)</label><textarea id="lrItems" rows="6" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text)">Ana
-Luis
-Carlos
-María
-Pedro</textarea></div>'+
+app.innerHTML='<div class="calc-form"><div class="form-row"><label>Elementos (uno por línea)</label><textarea id="lrItems" rows="6" style="width:100%;padding:8px;border:1px solid var(--borde);border-radius:8px;background:var(--card2);color:var(--text)">Ana\nLuis\nCarlos\nMaría\nPedro</textarea></div>'+
 '<button class="btn-primary" id="btnLR">Ordenar al azar</button><div class="resultado" id="lrRes"></div></div>';
-document.getElementById('btnLR').addEventListener('click',function(){var t=document.getElementById('lrItems').value.split('
-').filter(function(l){return l.trim()});
+document.getElementById('btnLR').addEventListener('click',function(){var t=document.getElementById('lrItems').value.split('\\n').filter(function(l){return l.trim()});
 if(!t.length)return;var a=[].concat(t),i;for(i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var tmp=a[i];a[i]=a[j];a[j]=tmp;}
 document.getElementById('lrRes').innerHTML='<div class="hash-output">'+a.join('<br>')+'</div>';});}
 
