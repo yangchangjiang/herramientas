@@ -10,7 +10,7 @@ function g(id){return parseFloat(document.getElementById(id).value)||0;}
 
 // ===== PORCENTAJE =====
 function renderPorcentaje(){
-'<div class="tabs" id="pTabs">'+
+app.innerHTML='<div class="tabs" id="pTabs">'+
 '<button class="tab active" data-tab="Basico">Básico</button>'+
 '<button class="tab" data-tab="Desc">Descuento</button>'+
 '<button class="tab" data-tab="Cambio">Cambio %</button>'+
