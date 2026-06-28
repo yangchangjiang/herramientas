@@ -787,4 +787,5 @@ fechamas:renderFechamas,laborables:renderLaborables,mascota:renderMascota,bisies
 cardiaco:renderCardiaco,nota:renderNota,hipoteca:renderHipoteca
 };
 if(modes[mode])modes[mode]();
+window.__renderTool=function(m){if(modes[m])modes[m]()};
 })();
