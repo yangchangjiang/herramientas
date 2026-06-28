@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Sitemap: https://herramientas.cc/sitemap.xml
+
+User-agent: Mediapartners-Google
+Allow: /
