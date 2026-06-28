@@ -15,8 +15,8 @@ app.innerHTML='<div class="tabs" id="pTabs">'+
 '<button class="tab" data-tab="Desc">Descuento</button>'+
 '<button class="tab" data-tab="Cambio">Cambio %</button>'+
 '<button class="tab" data-tab="Prop">Propina</button></div>'+
-'<div class="panel active" id="pBasico"><div class="form-row"><label>Valor</label><input type="number" id="pVal" placeholder="200"></div>'+
-'<div class="form-row"><label>Porcentaje</label><input type="number" id="pPct" placeholder="15"></div>'+
+'<div class="panel active" id="pBasico"><div class="form-row"><label>Valor</label><input type="number" id="pVal" value="200" placeholder="200"></div>'+
+'<div class="form-row"><label>Porcentaje</label><input type="number" id="pPct" value="15" placeholder="15"></div>'+
 '<button class="btn-primary" id="btnP">Calcular</button><div class="resultado" id="pRes"></div></div>'+
 '<div class="panel" id="pDesc"><div class="form-row"><label>Precio original</label><input type="number" id="pOrig" placeholder="100"></div>'+
 '<div class="form-row"><label>% Descuento</label><input type="number" id="pDescPct" placeholder="20"></div>'+
